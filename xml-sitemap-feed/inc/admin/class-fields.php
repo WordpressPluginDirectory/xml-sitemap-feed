@@ -61,14 +61,14 @@ class Fields {
 	 * Limit field
 	 */
 	public static function post_types_general_fields() {
-		$post_types = (array) \get_option( 'xmlsf_post_types', \XMLSF\get_default_settings( 'post_types' ) );
-		$defaults   = \XMLSF\get_default_settings( 'post_type_settings' );
-		$settings   = (array) \get_option( 'xmlsf_post_type_settings', $defaults );
-		$limit      = ! empty( $settings['limit'] ) ? $settings['limit'] : $defaults['limit'];
+		$defaults   = \XMLSF\get_default_settings();
+		$post_types = (array) \get_option( 'xmlsf_post_types', $defaults['post_types'] );
+		$settings   = (array) \get_option( 'xmlsf_post_type_settings', $defaults['post_type_settings'] );
+		$limit      = ! empty( $settings['limit'] ) ? $settings['limit'] : '';
 
 		// The actual fields for data entry.
 		include XMLSF_DIR . '/views/admin/field-sitemap-post-types.php';
-		\xmlsf()->sitemap->uses_core_server() && include XMLSF_DIR . '/views/admin/field-sitemap-limit.php';
+		'core' === \xmlsf()->sitemap->server_type && include XMLSF_DIR . '/views/admin/field-sitemap-post-types-limit.php';
 	}
 
 	/**
@@ -149,14 +149,15 @@ class Fields {
 	 */
 
 	/**
-	 * Sitemap name field
+	 * Sitemap slug field
 	 */
-	public static function xmlsf_sitemap_name_field() {
-		$sitemaps = (array) \get_option( 'xmlsf_sitemaps', array() );
-		$slug     = \is_object( \xmlsf()->sitemap ) ? \xmlsf()->sitemap->slug() : ( \xmlsf()->sitemap->uses_core_server() ? 'wp-sitemap' : 'sitemap' );
+	public static function xmlsf_sitemap_slug_field() {
+		$sitemaps    = (array) \get_option( 'xmlsf_sitemaps', array() );
+		$placeholder = \is_object( \xmlsf()->sitemap ) && 'core' === \xmlsf()->sitemap->server_type ? 'wp-sitemap' : 'sitemap';
+		$slug        = \get_option( 'xmlsf_sitemap_name', '' );
 
 		// The actual fields for data entry.
-		include XMLSF_DIR . '/views/admin/field-sitemap-name.php';
+		include XMLSF_DIR . '/views/admin/field-sitemap-slug.php';
 	}
 
 	/**
