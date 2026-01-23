@@ -2,21 +2,20 @@
 /**
  * Status301 Premium Google Search Console Connection Onboarding
  *
- * @package XML Sitemap & Google News - Google News Advanced
+ * @package XML Sitemap & Google News
  */
 
 namespace XMLSF\Admin;
 
-use XMLSF\GSC_Oauth_Handler;
+use XMLSF\Secret;
 
 /**
  * Helper class with public methods to set up a Google Search Console connection.
  *
  * @author RavanH
- * @version 1.0
+ * @version 5.6
  */
 class GSC_Connect_Settings extends GSC_Connect {
-
 	/**
 	 * Placeholder for the saved password.
 	 * This is used to avoid showing the actual password in the settings page.
@@ -36,7 +35,7 @@ class GSC_Connect_Settings extends GSC_Connect {
 		}
 		?>
 		<div class="wrap">
-			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<h1><?php echo \esc_html( get_admin_page_title() ); ?></h1>
 
 			<form action="options.php" method="post">
 				<?php
@@ -62,12 +61,12 @@ class GSC_Connect_Settings extends GSC_Connect {
 		isset( $_GET['ref'] ) && in_array( $_GET['ref'], array( 'xmlsf', 'xmlsf_news' ), true ) && \set_transient( 'gsc_connect_origin', \sanitize_key( $_GET['ref'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		// Prepare the option if it does not already exist. Sets it as non-autoloaded option.
-		add_option( self::$option_group, '', '', false );
+		\add_option( self::$option_group, '', '', false );
 
 		// Get existing data from DB.
 		$options = (array) \get_option( self::$option_group, array() );
 
-		settings_errors();
+		\settings_errors();
 
 		// Intro.
 		include XMLSF_DIR . '/views/admin/section-gsc-oauth-intro.php';
@@ -81,8 +80,8 @@ class GSC_Connect_Settings extends GSC_Connect {
 			$oauth_url    = \add_query_arg(
 				array(
 					'client_id'     => $options['google_client_id'],
-					'redirect_uri'  => rawurlencode( $redirect_uri ),
-					'scope'         => rawurlencode( 'https://www.googleapis.com/auth/webmasters' ),
+					'redirect_uri'  => \rawurlencode( $redirect_uri ),
+					'scope'         => \rawurlencode( 'https://www.googleapis.com/auth/webmasters' ),
 					'response_type' => 'code',
 					'access_type'   => 'offline', // Request a refresh token.
 					'prompt'        => 'consent', // Ensure consent screen is shown.
@@ -132,6 +131,7 @@ class GSC_Connect_Settings extends GSC_Connect {
 	 */
 	public static function sanitize_settings( $input ) {
 		$sanitized = array();
+		$input     = (array) $input;
 		$options   = (array) \get_option( self::$option_group, array() ); // Not strictly needed if only sanitizing submitted input.
 
 		// Sanitize Google Client ID.
@@ -142,15 +142,23 @@ class GSC_Connect_Settings extends GSC_Connect {
 		}
 
 		// Sanitize Google Client Secret.
-		if ( isset( $input['google_client_secret'] ) && self::$pw_placeholder !== $input['google_client_secret'] ) {
-			$sanitized['google_client_secret'] = ! empty( $input['google_client_secret'] ) ? GSC_Oauth_Handler::encrypt( \sanitize_text_field( $input['google_client_secret'] ) ) : '';
+		if ( isset( $input['google_client_secret'] ) && self::$pw_placeholder !== $input['google_client_secret'] && ( empty( $options['google_client_secret'] ) || $options['google_client_secret'] !== $input['google_client_secret'] ) ) {
+			$sanitized['google_client_secret'] = Secret::encrypt( \sanitize_text_field( $input['google_client_secret'] ) );
 		} else {
 			$sanitized['google_client_secret'] = isset( $options['google_client_secret'] ) ? $options['google_client_secret'] : '';
 		}
 
-		// Make sure to not loose existing refresh token, but only if client id is set and was not changed.
-		if ( ! empty( $options['google_refresh_token'] ) && $sanitized['google_client_id'] === $options['google_client_id'] ) {
-			$sanitized['google_refresh_token'] = $options['google_refresh_token'];
+		// Make sure to not loose existing refresh token, but only if client id was not changed. Allows clearing the token with an empty string.
+		if ( isset( $input['google_refresh_token'] ) ) {
+			$sanitized['google_refresh_token'] = \sanitize_text_field( $input['google_refresh_token'] );
+		} else {
+			$sanitized['google_refresh_token'] = isset( $options['google_refresh_token'] ) && ! empty( $options['google_client_id'] ) && $sanitized['google_client_id'] === $options['google_client_id'] ? $options['google_refresh_token'] : '';
+		}
+
+		if ( isset( $input['property_url'] ) ) {
+			$sanitized['property_url'] = \sanitize_text_field( $input['property_url'] );
+		} else {
+			$sanitized['property_url'] = isset( $options['property_url'] ) ? $options['property_url'] : '';
 		}
 
 		return $sanitized;

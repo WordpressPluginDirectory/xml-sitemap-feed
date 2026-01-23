@@ -2,12 +2,10 @@
 /**
  * GSC data section
  *
- * @package XML Sitemap & Google News - Google News Advanced
+ * @package XML Sitemap & Google News
  */
 
-// Get connect data.
-$options = (array) get_option( 'xmlsf_gsc_connect', array() );
-if ( empty( $options['google_refresh_token'] ) ) {
+if ( ! \XMLSF\GSC_Connect::is_connected() ) {
 	// Initiate button.
 	?>
 	<p>
@@ -22,8 +20,9 @@ if ( empty( $options['google_refresh_token'] ) ) {
 	return;
 }
 
+// Get connect data.
 $sitemap = xmlsf()->sitemap_news->get_sitemap_url();
-$data    = XMLSF\GSC_Connect::get( $sitemap );
+$data    = \XMLSF\GSC_Connect::get( $sitemap );
 
 ?>
 <p><?php esc_html_e( 'Your sitemap data as reported by Google Search Console.', 'xml-sitemap-feed' ); ?></p>
@@ -50,11 +49,11 @@ $is_pending      = isset( $data['isPending'] ) ? $data['isPending'] : false;
 $last_downloaded = isset( $data['lastDownloaded'] ) ? wp_date( $format, strtotime( $data['lastDownloaded'] ) ) : __( 'Unknown', 'xml-sitemap-feed' );
 $_warnings       = isset( $data['warnings'] ) ? $data['warnings'] : 0;
 $_errors         = isset( $data['errors'] ) ? $data['errors'] : 0;
-$property        = XMLSF\Admin\GSC_Connect::get_property_url();
+$property        = \XMLSF\Admin\GSC_Connect::get_property_url();
 $gsc_link        = add_query_arg(
 	array(
-		'resource_id' => $property,
-		'sitemap'     => $sitemap,
+		'resource_id' => rawurlencode( $property ),
+		'sitemap'     => rawurlencode( $sitemap ),
 	),
 	'https://search.google.com/search-console/sitemaps/info-drilldown'
 );
@@ -85,7 +84,7 @@ if ( isset( $data['contents'] ) && is_array( $data['contents'] ) ) {
 	<tbody>
 		<tr>
 			<th>
-				<a href="<?php echo esc_url( $gsc_link ); ?>" target="_blank">
+				<a href="<?php echo esc_url( $gsc_link ); ?>" target="_blank" title="<?php esc_html_e( 'View this sitemap in Google Search Console', 'xml-sitemap-feed' ); ?>">
 					<?php echo esc_html( $data['path'] ); ?>
 					<span class="dashicons dashicons-external"></span>
 				</a>
@@ -99,7 +98,7 @@ if ( isset( $data['contents'] ) && is_array( $data['contents'] ) ) {
 			<td><?php echo esc_html( $last_submitted ); ?></td>
 			<td><?php echo esc_html( $last_downloaded ); ?></td>
 			<td><?php echo esc_html__( 'Found:', 'xml-sitemap-feed' ) . ' ' . esc_html( $links_submitted ) . '<br>' . esc_html__( 'Indexed:', 'xml-sitemap-feed' ) . ' ' . esc_html( $links_indexed ); ?></td>
-			<td style="color:<?php $_warnings ? '#dba617' : ( $_errors ? '#d63638' : 'inherit' ); ?>"><?php echo esc_html__( 'Warnings:', 'xml-sitemap-feed' ) . ' ' . esc_html( $_warnings ) . '<br>' . esc_html__( 'Errors:', 'xml-sitemap-feed' ) . ' ' . esc_html( $_errors ); ?></td>
+			<td style="color:<?php echo $_errors ? '#d63638' : ( $_warnings ? '#dba617' : 'inherit' ); ?>"><?php echo esc_html__( 'Warnings:', 'xml-sitemap-feed' ) . ' ' . esc_html( $_warnings ) . '<br>' . esc_html__( 'Errors:', 'xml-sitemap-feed' ) . ' ' . esc_html( $_errors ); ?></td>
 		</tr>
 	</tbody>
 </table>

@@ -2,7 +2,7 @@
 /**
  * GSC Oauth section stage 1
  *
- * @package XML Sitemap & Google News - Google News Advanced
+ * @package XML Sitemap & Google News
  */
 
 ?>
@@ -27,7 +27,10 @@
 		?>
 	</li>
 </ol>
-<p><?php esc_html_e( 'Follow the steps below to create a Google Cloud Console project and obtain your credentials.', 'xml-sitemap-feed' ); ?> <?php esc_html_e( 'Please use a Google account that has Full access to the site property in Google Search Console.', 'xml-sitemap-feed' ); ?></p>
+<p>
+	<?php esc_html_e( 'Follow the steps below to create a Google Cloud Console project and obtain your credentials.', 'xml-sitemap-feed' ); ?>
+	<?php esc_html_e( 'Please use a Google account that has at least Full access to the site property in Google Search Console.', 'xml-sitemap-feed' ); ?>
+</p>
 <h3><?php esc_html_e( 'Stage I. Create a Google Cloud Console project', 'xml-sitemap-feed' ); ?></h3>
 <ol>
 	<li>
@@ -49,11 +52,11 @@
 			'<strong>' . esc_html__( 'OAuth consent screen', 'xml-sitemap-feed' ) . '</strong>'
 		);
 		?>
-		<ol>
+		<ul style="list-style: inside lower-alpha; ">
 			<li>
 				<?php
 				printf(
-					/* translators: %1$s: Get started, %2$s: Create */
+					/* translators: %1$s: Get started, %2$s: Next */
 					esc_html__( 'Click the %1$s button, give your App a recognizable name, select a support e-mail address and hit %2$s.', 'xml-sitemap-feed' ),
 					'<strong>' . esc_html__( 'Get started', 'xml-sitemap-feed' ) . '</strong>',
 					'<strong>' . esc_html__( 'Next', 'xml-sitemap-feed' ) . '</strong>'
@@ -74,14 +77,14 @@
 				<?php
 				printf(
 					/* translators: %1$s: External, %2$s: Audience, %3$s: Publish app */
-					esc_html__( 'If you chose %1$s above, then navigate to %1$s and click %2$s.', 'xml-sitemap-feed' ),
+					esc_html__( 'If you chose %1$s above, then navigate to %2$s and click %3$s.', 'xml-sitemap-feed' ),
 					'<em>' . esc_html__( 'External', 'xml-sitemap-feed' ) . '</em>',
 					'<strong>' . esc_html__( 'Audience', 'xml-sitemap-feed' ) . '</strong>',
 					'<strong>' . esc_html__( 'Publish app', 'xml-sitemap-feed' ) . '</strong>'
 				);
 				?>
 			</li>
-		</ol>
+		</ul>
 	</li>
 	<li>
 		<?php
@@ -141,11 +144,16 @@
 		?>
 	</li>
 </ol>
-<p><strong><?php esc_html_e( 'Important:', 'xml-sitemap-feed' ); ?></strong> <?php esc_html_e( 'Ensure the Redirect URI is copied and pasted exactly as shown.', 'xml-sitemap-feed' ); ?></p>
+<p>
+	<strong>
+		<?php esc_html_e( 'Important:', 'xml-sitemap-feed' ); ?>
+	</strong>
+	<?php esc_html_e( 'Ensure the Redirect URI is copied and pasted exactly as shown.', 'xml-sitemap-feed' ); ?>
+</p>
 <p>
 	<?php
 	printf(
-		/* translators: %s: Save Settings */
+		/* translators: %1$s: Save Changes, %2$s: Connect to Google Search Console */
 		esc_html__( 'After filling the fields below and clicking %1$s a button %2$s will allow you (or another site admin) to finalize the connection.', 'xml-sitemap-feed' ),
 		'<strong>' . esc_html( \translate( 'Save Changes' ) ) . '</strong>', // phpcs:ignore WordPress.WP.I18n.LowLevelTranslationFunction
 		'<strong>' . esc_html__( 'Connect to Google Search Console', 'xml-sitemap-feed' ) . '</strong>'
