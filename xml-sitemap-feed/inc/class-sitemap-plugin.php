@@ -522,7 +522,7 @@ class Sitemap_Plugin extends Sitemap {
 
 		elseif ( 'monthly' === $archive_type ) :
 
-			$query      = "SELECT YEAR(post_date) AS `year`, MONTH(post_date) AS `month`, count(ID) as `posts` FROM `$wpdb->posts` $where GROUP BY YEAR(post_date), MONTH(post_date) ORDER BY `year` DESC, `month` DESC";
+			$query      = "SELECT YEAR(post_date) AS `year`, LPAD(MONTH(post_date), 2, '0') AS `month`, count(ID) as `posts` FROM `$wpdb->posts` $where GROUP BY YEAR(post_date), LPAD(MONTH(post_date), 2, '0') ORDER BY `year` DESC, `month` DESC";
 			$arcresults = $this->cache_get_archives( $query );
 
 			foreach ( (array) $arcresults as $arcresult ) {
@@ -679,7 +679,7 @@ class Sitemap_Plugin extends Sitemap {
 			$post_types = $this->get_post_types();
 			foreach ( $post_types as $post_type ) :
 				$settings     = $this->post_type_settings( $post_type );
-				$archive      = isset( $settings['archive'] ) ? $settings['archive'] : '';
+				$archive      = isset( $settings['archive'] ) ? $settings['archive'] : ( $post_type->hierarchical ? 'yearly' : '' ) ;
 				$archive_data = \apply_filters( 'xmlsf_index_archive_data', array(), $post_type, $archive );
 
 				foreach ( $archive_data as $url => $lastmod ) {

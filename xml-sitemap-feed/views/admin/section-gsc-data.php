@@ -12,7 +12,7 @@ if ( ! \XMLSF\GSC_Connect::is_connected() ) {
 		<?php printf( /* translators: %s: Google Search Console */ esc_html_x( 'Connect to %s for sitemap data retrieval and sitemap submissions.', 'Google Search Console connection', 'xml-sitemap-feed' ), esc_html__( 'Google Search Console', 'xml-sitemap-feed' ) ); ?>
 	</p>
 	<p>
-		<a href="<?php echo esc_url( add_query_arg( 'ref', 'xmlsf', \XMLSF\Admin\GSC_Connect::get_settings_url() ) ); ?>" class="button button-primary">
+		<a href="<?php echo esc_url( add_query_arg( 'ref', 'xmlsf', \XMLSF\Admin\GSC_Connect::get_settings_url() ) ); ?>" class="button button-small">
 			<?php esc_html_e( 'Connect', 'xml-sitemap-feed' ); ?>
 		</a>
 	</p>
@@ -21,8 +21,10 @@ if ( ! \XMLSF\GSC_Connect::is_connected() ) {
 }
 
 // Get connect data.
-$sitemap = xmlsf()->sitemap->get_sitemap_url();
-$data    = \XMLSF\GSC_Connect::get( $sitemap );
+$sitemap    = xmlsf()->sitemap->get_sitemap_url();
+$parsed_url = parse_url( $sitemap );
+$path       = $parsed_url['path'];
+$data       = \XMLSF\GSC_Connect::get( $sitemap );
 
 ?>
 <p><?php esc_html_e( 'Your sitemap data as reported by Google Search Console.', 'xml-sitemap-feed' ); ?></p>
@@ -44,7 +46,7 @@ if ( \is_wp_error( $data ) ) {
 		?>
 	</p>
 	<p>
-		<a href="" class="button button-primary"><?php echo esc_html( translate( 'Retry' ) ); // phpcs:ignore WordPress.WP.I18n.LowLevelTranslationFunction ?></a>
+		<a href="" class="button button-small"><?php echo esc_html( translate( 'Retry' ) ); // phpcs:ignore WordPress.WP.I18n.LowLevelTranslationFunction ?></a>
 	</p>
 	<?php
 
@@ -93,14 +95,14 @@ if ( isset( $data['contents'] ) && is_array( $data['contents'] ) ) {
 		<tr>
 			<th>
 				<a href="<?php echo esc_url( $gsc_link ); ?>" target="_blank" title="<?php esc_html_e( 'View this sitemap in Google Search Console', 'xml-sitemap-feed' ); ?>">
-					<?php echo esc_html( $data['path'] ); ?>
+					<?php echo esc_html( $parsed_url['path'] ); ?>
 					<span class="dashicons dashicons-external"></span>
 				</a>
 			</th>
 			<td><?php if ( $is_pending ) : ?>
 				<span class="dashicons dashicons-clock" style="color:#dba617" title="<?php esc_html_e( 'Pending', 'xml-sitemap-feed' ); ?>"></span>
 			<?php else : ?>
-				<span class="dashicons dashicons-yes-alt" style="color:#00a32a" title="<?php echo esc_html_e( 'Processed', 'xml-sitemap-feed' ); ?>"></span>
+				<span class="dashicons dashicons-yes-alt" style="color:#00a32a" title="<?php esc_html_e( 'Processed', 'xml-sitemap-feed' ); ?>"></span>
 			<?php endif; ?>
 			</td>
 			<td><?php echo esc_html( $last_submitted ); ?></td>

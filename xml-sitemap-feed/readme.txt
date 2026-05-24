@@ -4,8 +4,8 @@ Donate link: https://www.paypal.com/donate/?hosted_button_id=5UVXZVN5HDKBS
 Tags: sitemap, xml, news, robots, Google News
 Requires at least: 4.6
 Requires PHP: 5.6
-Tested up to: 6.9
-Stable tag: 5.7.1
+Tested up to: 7.0
+Stable tag: 5.7.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -150,20 +150,35 @@ Please read more on [FAQ's and Troubleshooting](https://premium.status301.com/kn
 
 == Upgrade Notice ==
 
-= 5.7.1 =
+= 5.7.5 =
 
-Fix Google Connect instructions text.
+Bugfixes: split by year default and bing report issue.
 
 == Changelog ==
 
-= 5.7.1 =
+= 5.7.5 =
 
-Date: 202623
+Date: 20260519
+* Fix: Bing report only returns sitemap number
+* Fix: Split by year no longer default after swichting server
+* Drop additional no-store for news sitemap nocache headers
+
+= 5.7.4 =
+
+Date: 20260430
+* Fix LPAD months, thanks @midwestdev
+* Fix settings fields: news notifier and stock tickers
+* Admin button styles
+
+= 5.7.2 =
+
+Date: 20260129
 * Fix Google Connect instructions text
+* Fix transients upgrade routine
 
 = 5.7 =
 
-Date: 202621
+Date: 20260121
 * Bing Webmaster Tools sitemap reports
 * Bing sitemap submission from admin
 * Priority tags dropped
